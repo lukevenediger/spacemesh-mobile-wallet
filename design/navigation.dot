@@ -1,0 +1,219 @@
+# http://www.graphviz.org/content/cluster
+
+digraph  {
+    
+    bgcolor="#000000"
+    
+    labelloc="t"
+    label="Spacemesh Mobile Navigation Graph"
+    fontcolor="#3AFFA7"
+    fontsize=40
+
+    node [
+        fontname="arial"
+        shape="rectangle"
+        color="#FFFFFF"
+        fontcolor="#FFFFFF"
+    ]
+    
+    edge [
+        color="#DFDFDF"
+        fontcolor="#FFFFFF"
+    ]            
+    
+    
+    subgraph cluster_init {
+        label="Initialisation"
+        bgcolor="#373737"
+        fontcolor="#3AFFA7"
+        fontsize=20
+        
+        
+        s_splash [
+            label="Splash Screen"
+        ]
+        
+        d_check_for_wallet [
+            label="Has Wallet(s)?"
+        ]
+        
+        d_how_many_wallets[
+            label="How Many Wallets?"
+        ]
+        
+        s_splash -> d_check_for_wallet
+        d_check_for_wallet -> d_how_many_wallets [
+            label="Yes"
+        ]
+    }
+    
+    subgraph cluster_create_account {
+        label="Create Account"
+        bgcolor="#373737"
+        fontcolor="#3AFFA7"
+        fontsize=20
+
+        
+        d_add_or_recover [
+          label="Add Or Recover?"
+        ]
+        
+        subgraph cluster_add_account {
+            label="Add Account"
+            bgcolor="#464646"
+            
+            d_create_or_watch [
+                label="Create Or Watch?"
+            ]    
+            
+            subgraph cluster_create_new_account {
+                label="Create New Account"
+                bgcolor="#616161"
+                
+                s_passphrase_warning [
+                    label="Passphrase Backup Warning"
+                ]
+                
+                s_write_it_down_warning [
+                    label="Prepare To Write Down"
+                ]
+                
+                s_show_seed_words [
+                    label="Show Seed Words"
+                ]
+                
+                s_verify_seed_words [
+                    label="Verify Seed Words"
+                ]
+                
+                s_capture_account_name [
+                    label="Name Your Account"
+                ]
+                
+                s_passphrase_warning -> s_write_it_down_warning
+                s_write_it_down_warning -> s_show_seed_words
+                s_show_seed_words -> s_verify_seed_words
+                s_verify_seed_words -> s_capture_account_name
+            }
+        
+        
+            subgraph cluster_watch_account {
+                label="Watch Account"
+                bgcolor="#616161"
+                
+                s_watch_account [
+                    label="Watch Account"
+                ]
+                
+                s_capture_watch_address [
+                    label="Capture Watch Address"
+                ]
+                
+                s_watch_account -> s_capture_watch_address
+            }
+            
+            d_create_or_watch -> s_passphrase_warning [
+                label="Create New Account"
+            ]
+            d_create_or_watch -> s_watch_account [
+                label="Watch Account"
+            ]
+        }
+        
+        subgraph cluster_recover_account {
+            label="Recover Account"
+            bgcolor="#464646"
+            
+            s_recover_start [
+                label="Recover Account Start"
+            ]
+            
+            s_recover_capture_phrase [
+                label="Enter Your Passphrase"
+            ]
+            
+            s_recover_confirm_account [
+                label="Confirm Recovery"
+            ]
+            
+            s_recover_start -> s_recover_capture_phrase
+            s_recover_capture_phrase -> s_recover_confirm_account
+        }
+        
+        d_add_or_recover -> d_create_or_watch
+        d_add_or_recover -> s_recover_start
+        
+    }
+    
+    subgraph cluster_accounts {
+        label="Accounts"
+        bgcolor="#373737"
+        fontcolor="#3AFFA7"
+        fontsize=20        
+
+        s_accounts [
+            label="List Of Accounts"
+        ]
+        
+    }
+    
+    subgraph cluster_account_details {
+        label="Account Details"
+        bgcolor="#373737"
+        fontcolor="#3AFFA7"
+        fontsize=20        
+        
+        s_account_details [
+            label="View Account Details"
+        ]
+        
+        s_transaction_details [
+            label="View Transaction Details"
+        ]
+    }
+    
+    subgraph cluster_send_money {
+        label="Send Money"
+        bgcolor="#373737"
+        fontcolor="#3AFFA7"
+        fontsize=20
+        
+        s_send_money [
+            label="Send Money"
+        ]
+    }
+    
+    subgraph cluster_receive_money {
+        label="Receive Money"
+        bgcolor="#373737"
+        fontcolor="#3AFFA7"
+        fontsize=20
+        
+        s_receive_money [
+            label="Receive Money"
+        ]
+    }
+    
+    start -> s_splash
+    d_check_for_wallet -> d_add_or_recover [
+        label="No Wallet Found"
+    ]
+    d_how_many_wallets -> s_account_details [
+        label="Only One Wallet Found"
+    ]
+    d_how_many_wallets -> s_accounts [
+        label="Many Wallets Found"
+    ]
+    s_capture_account_name -> s_accounts
+    s_capture_watch_address -> s_accounts
+    s_recover_confirm_account -> s_accounts
+    
+    s_accounts -> s_send_money
+    s_accounts -> s_receive_money
+    s_accounts -> d_add_or_recover
+    
+    s_account_details -> s_send_money
+    s_account_details -> s_receive_money
+    
+    start [shape=Mdiamond]
+}
